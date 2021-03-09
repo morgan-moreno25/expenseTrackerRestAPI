@@ -1,0 +1,4 @@
+venv/
+/blacklist.py
+
+.idea/
