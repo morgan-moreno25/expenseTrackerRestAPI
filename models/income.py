@@ -20,7 +20,7 @@ class IncomeModel(db.Model):
             'id': self.id,
             'category': self.category,
             'amount': self.amount,
-            'user': self.user
+            'user_id': self.user_id
         }
 
     @classmethod
