@@ -5,8 +5,8 @@ class IncomeModel(db.Model):
     __tablename__ = 'income'
 
     id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.String(80), required=True)
-    amount = db.Column(db.Float(80), required=True)
+    category = db.Column(db.String(80))
+    amount = db.Column(db.Float(80))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('UserModel')
 

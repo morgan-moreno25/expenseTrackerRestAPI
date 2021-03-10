@@ -5,8 +5,8 @@ class ExpenseModel(db.Model):
     __tablename__ = 'expenses'
 
     id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.String(80), required=True)
-    amount = db.Column(db.Float(precision=2), required=True)
+    category = db.Column(db.String(80))
+    amount = db.Column(db.Float(precision=2))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('UserModel')
 
