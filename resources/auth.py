@@ -1,4 +1,3 @@
-from flask import jsonify
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -56,10 +55,10 @@ class UserRegister(Resource):
             user.save_to_db()
             access_token = create_access_token(identity=user)
 
-            return jsonify({
+            return {
                 'access_token': access_token,
                 'user': user.json(),
-            }), 201
+            }, 201
 
 
 class UserLoad(Resource):
@@ -68,9 +67,9 @@ class UserLoad(Resource):
         identity = get_jwt_identity()
         user = UserModel.find_by_id(identity['user_id'])
 
-        return jsonify({
+        return {
             'user': user.json()
-        }), 200
+        }, 200
 
 
 class UserLogout(Resource):
@@ -78,6 +77,6 @@ class UserLogout(Resource):
     def post(self):
         jti = get_jwt()['jti']
         BLACKLIST.add(jti)
-        return jsonify({
+        return {
             'message': 'Successfully logged out'
-        }), 200
+        }, 200
