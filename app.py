@@ -71,8 +71,6 @@ def load_identity(payload):
 @app.before_first_request
 def create_tables():
     db.create_all()
-    db.session.add(UserModel('freebandz', 'yankees12'))
-    db.session.commit()
 
 
 # Auth Routes
