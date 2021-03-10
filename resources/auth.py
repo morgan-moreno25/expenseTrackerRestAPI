@@ -62,18 +62,19 @@ class UserRegister(Resource):
 
 
 class UserLoad(Resource):
-    @jwt_required
+
+    @jwt_required()
     def get(self):
         identity = get_jwt_identity()
         user = UserModel.find_by_id(identity['user_id'])
-
         return {
-            'user': user.json()
+            'user': user.json(),
         }, 200
 
 
 class UserLogout(Resource):
-    @jwt_required
+
+    @jwt_required()
     def post(self):
         jti = get_jwt()['jti']
         BLACKLIST.add(jti)
