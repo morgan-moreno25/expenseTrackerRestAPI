@@ -1,3 +1,4 @@
+from flask import jsonify
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -20,22 +21,24 @@ class UserLogin(Resource):
 
         if not UserModel.find_by_username(data['username']):
             return {
-                       'message': 'User does not exist',
-                       'error': 'invalid_credentials',
+                       "message": "User does not exist",
+                       "error": "invalid_credentials",
                    }, 401
 
         user = UserModel.find_by_username(data['username'])
 
         if check_password_hash(user.password, data['password']):
+            access_token = create_access_token(identity=user)
+
             return {
-                       'access_token': create_access_token(identity=user),
-                       'user': user.json()
-                   }, 200
+                "access_token": access_token,
+                "user": user.json()
+            }, 200
         else:
             return {
-                       'message': 'Password is invalid',
-                       'error': 'invalid_credentials'
-                   }, 401
+                "message": "Password is invalid",
+                "error": "invalid_credentials"
+            }, 401
 
 
 class UserRegister(Resource):
@@ -44,18 +47,19 @@ class UserRegister(Resource):
 
         if UserModel.find_by_username(data['username']):
             return {
-                       'message': 'User already exists',
-                       'error': 'validation_error'
-                   }, 400
+                'message': 'User already exists',
+                'error': 'validation_error'
+            }, 400
         else:
             password_hash = generate_password_hash(data['password'], salt_length=10)
             user = UserModel(data['username'], password_hash)
             user.save_to_db()
+            access_token = create_access_token(identity=user)
 
-            return {
-                'token': create_access_token(identity=user),
-                'user': user.json()
-            }
+            return jsonify({
+                'access_token': access_token,
+                'user': user.json(),
+            }), 201
 
 
 class UserLoad(Resource):
@@ -64,9 +68,9 @@ class UserLoad(Resource):
         identity = get_jwt_identity()
         user = UserModel.find_by_id(identity['user_id'])
 
-        return {
-                   'user': user.json()
-               }, 200
+        return jsonify({
+            'user': user.json()
+        }), 200
 
 
 class UserLogout(Resource):
@@ -74,6 +78,6 @@ class UserLogout(Resource):
     def post(self):
         jti = get_jwt()['jti']
         BLACKLIST.add(jti)
-        return {
-                   'message': 'Successfully logged out'
-               }, 200
+        return jsonify({
+            'message': 'Successfully logged out'
+        }), 200

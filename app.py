@@ -62,10 +62,10 @@ def revoked_token_callback():
 
 @jwt.user_identity_loader
 def load_identity(payload):
-    return jsonify({
+    return {
         'user_id': payload.id,
         'username': payload.username
-    })
+    }
 
 
 @app.before_first_request
