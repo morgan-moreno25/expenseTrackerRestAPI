@@ -6,6 +6,10 @@ from blacklist import BLACKLIST
 
 from resources.auth import UserLogin, UserRegister, UserLoad, UserLogout
 from resources.user import User, UserList
+from resources.income import Income, IncomeList
+from resources.expense import Expense, ExpenseList
+
+from models.user import UserModel
 
 app = Flask(__name__)
 api = Api(app, prefix='/api')
@@ -66,6 +70,8 @@ def load_identity(payload):
 @app.before_first_request
 def create_tables():
     db.create_all()
+    db.session.add(UserModel('freebandz', 'yankees12'))
+    db.session.commit()
 
 
 # Auth Routes
@@ -79,8 +85,12 @@ api.add_resource(User, '/users/<int:_id>')
 api.add_resource(UserList, '/users')
 
 # Income Routes
+api.add_resource(Income, '/income/<int:_id>')
+api.add_resource(IncomeList, '/income')
 
 # Expense Routes
+api.add_resource(Expense, '/expenses/<int:_id>')
+api.add_resource(ExpenseList, '/expenses')
 
 if __name__ == '__main__':
     db.init_app(app)
