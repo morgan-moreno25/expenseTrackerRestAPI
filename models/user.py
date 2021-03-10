@@ -9,6 +9,7 @@ class UserModel(db.Model):
     username = db.Column(db.String(80))
     password = db.Column(db.String(80))
     income = db.relationship('IncomeModel', lazy='dynamic')
+    expense = db.relationship('ExpenseModel', lazy='dynamic')
 
     def __init__(self, username, password):
         self.username = username
