@@ -9,7 +9,7 @@ income_parser.add_argument('amount', type=float, required=True, help='Amount is 
 
 class Income(Resource):
 
-    @jwt_required
+    @jwt_required()
     def put(self, _id):
         data = income_parser.parse_args()
 
@@ -32,11 +32,11 @@ class Income(Resource):
             income.save_to_db()
 
         return {
-            'message': 'Succesfully updated',
-            'updatedIncome': income.json()
-        }, 200
+                   'message': 'Succesfully updated',
+                   'updatedIncome': income.json()
+               }, 200
 
-    @jwt_required
+    @jwt_required()
     def delete(self, _id):
         current_user = get_jwt_identity()
 
@@ -48,23 +48,23 @@ class Income(Resource):
                     income.delete_from_db()
             else:
                 return {
-                    'message': 'You are not authorized to delete this income data',
-                    'error': 'not_authorized'
-                }, 401
+                           'message': 'You are not authorized to delete this income data',
+                           'error': 'not_authorized'
+                       }, 401
         else:
             return {
-                'message': f'Income data with id {_id} does not exist',
-                'error': 'bad_request'
-            }, 400
+                       'message': f'Income data with id {_id} does not exist',
+                       'error': 'bad_request'
+                   }, 400
 
         return {
-            'message': 'Succesfully deleted',
-            'deletedIncome': income.json()
-        }, 200
+                   'message': 'Succesfully deleted',
+               }, 200
+
 
 class IncomeList(Resource):
 
-    @jwt_required
+    @jwt_required()
     def get(self):
         current_user = get_jwt_identity()
 
@@ -72,15 +72,15 @@ class IncomeList(Resource):
             income = IncomeModel.get_all_by_user(current_user['user_id'])
         except:
             return {
-                'message': 'An error occurred when fetching the income data',
-                'error': 'server_error'
-            }, 500
+                       'message': 'An error occurred when fetching the income data',
+                       'error': 'server_error'
+                   }, 500
 
         return {
-            'income': [i.json() for i in income]
-        }, 200
+                   'income': [i.json() for i in income]
+               }, 200
 
-    @jwt_required
+    @jwt_required()
     def post(self):
         data = income_parser.parse_args()
 
@@ -92,10 +92,10 @@ class IncomeList(Resource):
             income.save_to_db()
         except:
             return {
-                'message': 'An error occurred when saving the income data to the database',
-                'error': 'server_error'
-            }, 500
+                       'message': 'An error occurred when saving the income data to the database',
+                       'error': 'server_error'
+                   }, 500
 
         return {
-            'income': income.json()
-        }, 201
+                   'income': income.json()
+               }, 201
