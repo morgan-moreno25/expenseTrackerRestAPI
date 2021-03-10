@@ -2,3 +2,4 @@ venv/
 /blacklist.py
 
 .idea/
+data.db
