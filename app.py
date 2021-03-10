@@ -24,40 +24,32 @@ jwt = JWTManager(app)
 
 
 @jwt.token_in_blocklist_loader
-def check_if_token_in_blacklist(token):
-    return token['jti'] in BLACKLIST
+def check_if_token_in_blacklist(jwt_header, jwt_payload):
+    return jwt_payload['jti'] in BLACKLIST
 
 
 @jwt.expired_token_loader
-def expired_token_callback():
-    return jsonify({
+def expired_token_callback(jwt_header, jwt_payload):
+    return {
         'message': 'This token has expired',
         'error': 'token_expired',
-    }), 401
+    }, 401
 
 
 @jwt.unauthorized_loader
 def missing_token_callback(error):
-    return jsonify({
+    return {
         'message': 'No token provided',
         'error': 'authorization_required',
-    }), 401
-
-
-@jwt.needs_fresh_token_loader
-def token_not_fresh_callback():
-    return jsonify({
-        'message': 'Token is not fresh',
-        'error': 'fresh_token_required'
-    }), 401
+    }, 401
 
 
 @jwt.revoked_token_loader
-def revoked_token_callback():
-    return jsonify({
+def revoked_token_callback(jwt_header, jwt_payload):
+    return {
         'message': 'Token has been revoked',
         'error': 'token_revoked',
-    }), 401
+    }, 401
 
 
 @jwt.user_identity_loader
