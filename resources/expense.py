@@ -9,7 +9,7 @@ expense_parser.add_argument('amount', type=float, required=True, help='Amount is
 
 class Expense(Resource):
 
-    @jwt_required
+    @jwt_required()
     def put(self, _id):
         data = expense_parser.parse_args()
         current_user = get_jwt_identity()
@@ -23,19 +23,19 @@ class Expense(Resource):
                 expense.save_to_db()
             else:
                 return {
-                    'message': 'You are not authorized to update this expense data',
-                    'error': 'not_authorized'
-                }, 401
+                           'message': 'You are not authorized to update this expense data',
+                           'error': 'not_authorized'
+                       }, 401
         else:
             expense = ExpenseModel(data['category'], data['amount'], current_user['user_id'])
             expense.save_to_db()
 
         return {
-            'message': 'Successfully updated',
-            'updatedExpense': expense.json()
-        }, 200
+                   'message': 'Successfully updated',
+                   'updatedExpense': expense.json()
+               }, 200
 
-    @jwt_required
+    @jwt_required()
     def delete(self, _id):
         current_user = get_jwt_identity()
 
@@ -46,23 +46,23 @@ class Expense(Resource):
                 expense.delete_from_db()
             else:
                 return {
-                    'message': 'You are not authorized to delete this expense data',
-                    'error': 'not_authorized'
-                }, 401
+                           'message': 'You are not authorized to delete this expense data',
+                           'error': 'not_authorized'
+                       }, 401
         else:
             return {
-                'message': f'Expense data with id {_id} does not exist',
-                'error': 'bad_request'
-            }, 400
+                       'message': f'Expense data with id {_id} does not exist',
+                       'error': 'bad_request'
+                   }, 400
 
         return {
-            'message': 'Successfully deleted',
-            'deletedExpense': expense.json()
-        }, 200
+                   'message': 'Successfully deleted',
+               }, 200
+
 
 class ExpenseList(Resource):
 
-    @jwt_required
+    @jwt_required()
     def get(self):
         current_user = get_jwt_identity()
 
@@ -70,15 +70,15 @@ class ExpenseList(Resource):
             expenses = ExpenseModel.get_all_by_user(current_user['user_id'])
         except:
             return {
-                'message': 'An error occurred while fetching expenses from the database',
-                'error': 'server_error',
-            }, 500
+                       'message': 'An error occurred while fetching expenses from the database',
+                       'error': 'server_error',
+                   }, 500
 
         return {
-            'expenses': [expense.json() for expense in expenses]
-        }, 200
+                   'expenses': [expense.json() for expense in expenses]
+               }, 200
 
-    @jwt_required
+    @jwt_required()
     def post(self):
         data = expense_parser.parse_args()
         current_user = get_jwt_identity()
@@ -88,10 +88,10 @@ class ExpenseList(Resource):
             expense.save_to_db()
         except:
             return {
-                'message': 'An error occurred while saving expense data to the database',
-                'error': 'server_error'
-            }, 500
+                       'message': 'An error occurred while saving expense data to the database',
+                       'error': 'server_error'
+                   }, 500
 
         return {
-            'expense': expense.json()
-        }, 200
+                   'expense': expense.json()
+               }, 200
