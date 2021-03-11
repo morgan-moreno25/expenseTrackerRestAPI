@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from db import db
@@ -9,7 +9,6 @@ from resources.user import User, UserList
 from resources.income import Income, IncomeList
 from resources.expense import Expense, ExpenseList
 
-from models.user import UserModel
 
 app = Flask(__name__)
 api = Api(app, prefix='/api')

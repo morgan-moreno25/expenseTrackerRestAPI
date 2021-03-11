@@ -3,6 +3,7 @@ from models.income import IncomeModel
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 income_parser = reqparse.RequestParser()
+income_parser.add_argument('date', type=str, required=True, help='Date is required')
 income_parser.add_argument('category', type=str, required=True, help='Category is required')
 income_parser.add_argument('amount', type=float, required=True, help='Amount is required')
 
@@ -19,6 +20,7 @@ class Income(Resource):
 
         if income:
             if income.user_id == current_user['user_id']:
+                income.date = data['date']
                 income.category = data['category']
                 income.amount = data['amount']
                 income.save_to_db()
@@ -28,7 +30,7 @@ class Income(Resource):
                            'error': 'not_authorized'
                        }, 401
         else:
-            income = IncomeModel(data['category'], data['amount'], current_user['user_id'])
+            income = IncomeModel(data['date'], data['category'], data['amount'], current_user['user_id'])
             income.save_to_db()
 
         return {
@@ -86,7 +88,7 @@ class IncomeList(Resource):
 
         current_user = get_jwt_identity()
 
-        income = IncomeModel(data['category'], data['amount'], current_user['user_id'])
+        income = IncomeModel(data['date'], data['category'], data['amount'], current_user['user_id'])
 
         try:
             income.save_to_db()
