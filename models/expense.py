@@ -18,6 +18,16 @@ class ExpenseModel(db.Model):
         self.user_id = user_id
 
     def json(self):
+        def calculate_quarter(month: int) -> int:
+            if month < 4:
+                return 1
+            if month < 7:
+                return 2
+            if month < 10:
+                return 3
+
+            return 4
+
         return {
             'id': self.id,
             'date': {
@@ -25,7 +35,8 @@ class ExpenseModel(db.Model):
                 'dayOfWeek': self.date.weekday(),
                 'dayOfMonth': self.date.day,
                 'month': self.date.month,
-                'year': self.date.year
+                'year': self.date.year,
+                'quarter': calculate_quarter(self.date.month)
             },
             'category': self.category,
             'amount': self.amount,
