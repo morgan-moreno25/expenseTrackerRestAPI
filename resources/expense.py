@@ -3,6 +3,7 @@ from models.expense import ExpenseModel
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 expense_parser = reqparse.RequestParser()
+expense_parser.add_argument('date', type=str, required=True, help='Date is required')
 expense_parser.add_argument('category', type=str, required=True, help='Category is required')
 expense_parser.add_argument('amount', type=float, required=True, help='Amount is required')
 
@@ -18,6 +19,7 @@ class Expense(Resource):
 
         if expense:
             if expense.user_id == current_user['user_id']:
+                expense.date = data['date']
                 expense.category = data['category']
                 expense.amount = data['amount']
                 expense.save_to_db()
@@ -27,7 +29,7 @@ class Expense(Resource):
                            'error': 'not_authorized'
                        }, 401
         else:
-            expense = ExpenseModel(data['category'], data['amount'], current_user['user_id'])
+            expense = ExpenseModel(data['date'], data['category'], data['amount'], current_user['user_id'])
             expense.save_to_db()
 
         return {
@@ -83,8 +85,9 @@ class ExpenseList(Resource):
         data = expense_parser.parse_args()
         current_user = get_jwt_identity()
 
+
         try:
-            expense = ExpenseModel(data['category'], data['amount'], current_user['user_id'])
+            expense = ExpenseModel(data['date'], data['category'], data['amount'], current_user['user_id'])
             expense.save_to_db()
         except:
             return {

@@ -1,5 +1,5 @@
 from db import db
-
+from datetime import datetime
 
 class ExpenseModel(db.Model):
     __tablename__ = 'expenses'
@@ -7,10 +7,12 @@ class ExpenseModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String(80))
     amount = db.Column(db.Float(precision=2))
+    date = db.Column(db.DateTime(timezone=False))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('UserModel')
 
-    def __init__(self, category, amount, user_id):
+    def __init__(self, date, category, amount, user_id):
+        self.date = datetime.strptime(date, '%Y-%m-%d')
         self.category = category
         self.amount = amount
         self.user_id = user_id
@@ -18,6 +20,13 @@ class ExpenseModel(db.Model):
     def json(self):
         return {
             'id': self.id,
+            'date': {
+                'date': self.date.strftime('%Y-%m-%d'),
+                'dayOfWeek': self.date.weekday(),
+                'dayOfMonth': self.date.day,
+                'month': self.date.month,
+                'year': self.date.year
+            },
             'category': self.category,
             'amount': self.amount,
             'user': self.user.json()
